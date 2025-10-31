@@ -96,7 +96,7 @@ const FoodLogList = ({ onUpdate }: FoodLogListProps) => {
           </div>
           
           <div className="space-y-1 mb-2">
-            {log.food_items?.map((item: any) => (
+            {Array.isArray(log.food_items) && log.food_items.map((item: any) => (
               <div key={item.id} className="text-sm">
                 <strong>{item.food_name}</strong> ({item.quantity})
               </div>
