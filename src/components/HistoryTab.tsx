@@ -53,12 +53,12 @@ const HistoryTab = () => {
     );
   }
 
-  const groupedLogs = logs.reduce((acc, log) => {
+  const groupedLogs = logs.reduce<Record<string, any[]>>((acc, log) => {
     const date = format(new Date(log.created_at), 'yyyy-MM-dd');
     if (!acc[date]) acc[date] = [];
     acc[date].push(log);
     return acc;
-  }, {} as Record<string, any[]>);
+  }, {});
 
   return (
     <div className="space-y-6 pb-20">

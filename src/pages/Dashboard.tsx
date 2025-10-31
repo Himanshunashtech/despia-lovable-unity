@@ -1,22 +1,26 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import FoodLogList from '@/components/FoodLogList';
 import TabNavigation from '@/components/TabNavigation';
 import ProfileTab from '@/components/ProfileTab';
 import HistoryTab from '@/components/HistoryTab';
-import ScanTab from '@/components/ScanTab';
+import HomeTab from '@/components/HomeTab';
+import FoodScanner from '@/components/FoodScanner';
+import VoiceInput from '@/components/VoiceInput';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Camera, Mic } from 'lucide-react';
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('home');
-  const [dailySummary, setDailySummary] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [showAddDialog, setShowAddDialog] = useState(false);
+  const [showScanner, setShowScanner] = useState(false);
+  const [showVoice, setShowVoice] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
     checkUser();
-    fetchDailySummary();
   }, []);
 
   const checkUser = async () => {
@@ -26,85 +30,21 @@ const Dashboard = () => {
     }
   };
 
-  const fetchDailySummary = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+  const handleRefresh = () => {
+    setRefreshKey(prev => prev + 1);
+  };
 
-      const today = new Date().toISOString().split('T')[0];
-      const { data, error } = await supabase
-        .from('daily_summaries')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('date', today)
-        .maybeSingle();
-
-      if (error) throw error;
-      setDailySummary(data);
-    } catch (error) {
-      console.error('Error fetching daily summary:', error);
-    } finally {
-      setLoading(false);
-    }
+  const handleFoodAdded = () => {
+    setShowScanner(false);
+    setShowVoice(false);
+    setShowAddDialog(false);
+    handleRefresh();
   };
 
   const renderContent = () => {
     switch (activeTab) {
       case 'home':
-        return (
-          <div className="space-y-6 pb-20">
-            {loading ? (
-              <div className="text-center py-8 text-muted-foreground">Loading...</div>
-            ) : (
-              <>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Today's Summary</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="text-center">
-                        <p className="text-2xl font-bold text-primary">
-                          {Math.round(Number(dailySummary?.total_calories || 0))}
-                        </p>
-                        <p className="text-sm text-muted-foreground">Calories</p>
-                      </div>
-                      <div className="text-center">
-                        <p className="text-2xl font-bold text-primary">
-                          {Math.round(Number(dailySummary?.total_protein || 0))}g
-                        </p>
-                        <p className="text-sm text-muted-foreground">Protein</p>
-                      </div>
-                      <div className="text-center">
-                        <p className="text-2xl font-bold text-primary">
-                          {Math.round(Number(dailySummary?.total_carbs || 0))}g
-                        </p>
-                        <p className="text-sm text-muted-foreground">Carbs</p>
-                      </div>
-                      <div className="text-center">
-                        <p className="text-2xl font-bold text-primary">
-                          {Math.round(Number(dailySummary?.total_fat || 0))}g
-                        </p>
-                        <p className="text-sm text-muted-foreground">Fat</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Today's Meals</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <FoodLogList onUpdate={fetchDailySummary} />
-                  </CardContent>
-                </Card>
-              </>
-            )}
-          </div>
-        );
-      case 'scan':
-        return <ScanTab onSuccess={fetchDailySummary} />;
+        return <HomeTab key={refreshKey} onRefresh={handleRefresh} />;
       case 'history':
         return <HistoryTab />;
       case 'profile':
@@ -116,15 +56,62 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 bg-background border-b border-border z-40 px-4 py-3 safe-area-top">
-        <h1 className="text-2xl font-bold text-center">Food Tracker</h1>
-      </header>
+      <TabNavigation 
+        activeTab={activeTab} 
+        onTabChange={setActiveTab}
+        onAddFood={() => setShowAddDialog(true)}
+      />
 
-      <main className="max-w-4xl mx-auto p-4">
+      <main className="max-w-2xl mx-auto px-4 pt-20 pb-24">
         {renderContent()}
       </main>
 
-      <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+      {/* Add Food Dialog */}
+      <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+        <DialogContent className="sm:max-w-md">
+          <div className="space-y-4 py-4">
+            <Button
+              onClick={() => {
+                setShowAddDialog(false);
+                setShowScanner(true);
+              }}
+              className="w-full h-20 text-lg"
+              size="lg"
+            >
+              <Camera className="mr-3 h-6 w-6" />
+              Scan Food with Camera
+            </Button>
+            <Button
+              onClick={() => {
+                setShowAddDialog(false);
+                setShowVoice(true);
+              }}
+              variant="secondary"
+              className="w-full h-20 text-lg"
+              size="lg"
+            >
+              <Mic className="mr-3 h-6 w-6" />
+              Voice Input
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Food Scanner */}
+      {showScanner && (
+        <FoodScanner
+          onClose={() => setShowScanner(false)}
+          onSuccess={handleFoodAdded}
+        />
+      )}
+
+      {/* Voice Input */}
+      {showVoice && (
+        <VoiceInput
+          onClose={() => setShowVoice(false)}
+          onSuccess={handleFoodAdded}
+        />
+      )}
     </div>
   );
 };
