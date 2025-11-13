@@ -200,8 +200,8 @@ const HomeTab = ({ onRefresh }: HomeTabProps) => {
         onUpdate={fetchData}
       />
 
-      {/* AI Suggestions */}
-      <AISuggestions />
+      {/* AI Suggestions - Temporarily disabled */}
+      {/* <AISuggestions /> */}
 
       {/* Recently Uploaded */}
       <div>

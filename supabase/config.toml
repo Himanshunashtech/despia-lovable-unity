@@ -12,5 +12,6 @@ verify_jwt = false
 [functions.lookup-barcode]
 verify_jwt = false
 
-[functions.ai-meal-suggestions]
-verify_jwt = true
+# Temporarily disabled to reduce bundling time
+# [functions.ai-meal-suggestions]
+# verify_jwt = true
