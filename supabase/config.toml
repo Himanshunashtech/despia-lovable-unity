@@ -1,1 +1,16 @@
 project_id = "tcldohfantqwewyjnyxr"
+
+[functions.analyze-food-image]
+verify_jwt = false
+
+[functions.parse-food-text]
+verify_jwt = false
+
+[functions.analyze-food-photo]
+verify_jwt = false
+
+[functions.lookup-barcode]
+verify_jwt = false
+
+[functions.ai-meal-suggestions]
+verify_jwt = true

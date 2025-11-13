@@ -53,6 +53,99 @@ export type Database = {
         }
         Relationships: []
       }
+      exercise_logs: {
+        Row: {
+          calories_burned: number | null
+          created_at: string | null
+          duration_minutes: number | null
+          exercise_name: string
+          id: string
+          logged_at: string | null
+          notes: string | null
+          user_id: string
+        }
+        Insert: {
+          calories_burned?: number | null
+          created_at?: string | null
+          duration_minutes?: number | null
+          exercise_name: string
+          id?: string
+          logged_at?: string | null
+          notes?: string | null
+          user_id: string
+        }
+        Update: {
+          calories_burned?: number | null
+          created_at?: string | null
+          duration_minutes?: number | null
+          exercise_name?: string
+          id?: string
+          logged_at?: string | null
+          notes?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      food_database: {
+        Row: {
+          barcode: string | null
+          brand: string | null
+          calories: number
+          carbs_g: number | null
+          created_at: string | null
+          data_source: string | null
+          fat_g: number | null
+          fiber_g: number | null
+          food_name: string
+          id: string
+          protein_g: number | null
+          serving_size: string | null
+          serving_unit: string | null
+          sodium_mg: number | null
+          sugar_g: number | null
+          updated_at: string | null
+          verified: boolean | null
+        }
+        Insert: {
+          barcode?: string | null
+          brand?: string | null
+          calories: number
+          carbs_g?: number | null
+          created_at?: string | null
+          data_source?: string | null
+          fat_g?: number | null
+          fiber_g?: number | null
+          food_name: string
+          id?: string
+          protein_g?: number | null
+          serving_size?: string | null
+          serving_unit?: string | null
+          sodium_mg?: number | null
+          sugar_g?: number | null
+          updated_at?: string | null
+          verified?: boolean | null
+        }
+        Update: {
+          barcode?: string | null
+          brand?: string | null
+          calories?: number
+          carbs_g?: number | null
+          created_at?: string | null
+          data_source?: string | null
+          fat_g?: number | null
+          fiber_g?: number | null
+          food_name?: string
+          id?: string
+          protein_g?: number | null
+          serving_size?: string | null
+          serving_unit?: string | null
+          sodium_mg?: number | null
+          sugar_g?: number | null
+          updated_at?: string | null
+          verified?: boolean | null
+        }
+        Relationships: []
+      }
       food_items: {
         Row: {
           calories: number | null
@@ -106,6 +199,8 @@ export type Database = {
       food_logs: {
         Row: {
           ai_analysis: Json | null
+          ai_confidence_score: number | null
+          barcode: string | null
           created_at: string | null
           id: string
           image_url: string | null
@@ -120,6 +215,8 @@ export type Database = {
         }
         Insert: {
           ai_analysis?: Json | null
+          ai_confidence_score?: number | null
+          barcode?: string | null
           created_at?: string | null
           id?: string
           image_url?: string | null
@@ -134,6 +231,8 @@ export type Database = {
         }
         Update: {
           ai_analysis?: Json | null
+          ai_confidence_score?: number | null
+          barcode?: string | null
           created_at?: string | null
           id?: string
           image_url?: string | null
@@ -150,37 +249,136 @@ export type Database = {
       }
       profiles: {
         Row: {
+          activity_level: string | null
           created_at: string | null
           daily_calorie_goal: number | null
           daily_carbs_goal: number | null
           daily_fat_goal: number | null
           daily_protein_goal: number | null
+          daily_water_goal_ml: number | null
           email: string | null
           full_name: string | null
           id: string
+          onboarding_completed: boolean | null
+          revenue_cat_user_id: string | null
+          subscription_expires_at: string | null
+          subscription_status: string | null
+          subscription_tier:
+            | Database["public"]["Enums"]["subscription_tier"]
+            | null
           updated_at: string | null
+          weight_goal_kg: number | null
         }
         Insert: {
+          activity_level?: string | null
           created_at?: string | null
           daily_calorie_goal?: number | null
           daily_carbs_goal?: number | null
           daily_fat_goal?: number | null
           daily_protein_goal?: number | null
+          daily_water_goal_ml?: number | null
           email?: string | null
           full_name?: string | null
           id: string
+          onboarding_completed?: boolean | null
+          revenue_cat_user_id?: string | null
+          subscription_expires_at?: string | null
+          subscription_status?: string | null
+          subscription_tier?:
+            | Database["public"]["Enums"]["subscription_tier"]
+            | null
           updated_at?: string | null
+          weight_goal_kg?: number | null
         }
         Update: {
+          activity_level?: string | null
           created_at?: string | null
           daily_calorie_goal?: number | null
           daily_carbs_goal?: number | null
           daily_fat_goal?: number | null
           daily_protein_goal?: number | null
+          daily_water_goal_ml?: number | null
           email?: string | null
           full_name?: string | null
           id?: string
+          onboarding_completed?: boolean | null
+          revenue_cat_user_id?: string | null
+          subscription_expires_at?: string | null
+          subscription_status?: string | null
+          subscription_tier?:
+            | Database["public"]["Enums"]["subscription_tier"]
+            | null
           updated_at?: string | null
+          weight_goal_kg?: number | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      water_logs: {
+        Row: {
+          amount_ml: number
+          created_at: string | null
+          id: string
+          logged_at: string | null
+          user_id: string
+        }
+        Insert: {
+          amount_ml: number
+          created_at?: string | null
+          id?: string
+          logged_at?: string | null
+          user_id: string
+        }
+        Update: {
+          amount_ml?: number
+          created_at?: string | null
+          id?: string
+          logged_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      weight_logs: {
+        Row: {
+          created_at: string | null
+          id: string
+          logged_at: string | null
+          user_id: string
+          weight_kg: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          logged_at?: string | null
+          user_id: string
+          weight_kg: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          logged_at?: string | null
+          user_id?: string
+          weight_kg?: number
         }
         Relationships: []
       }
@@ -189,10 +387,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "user" | "admin"
+      subscription_tier: "free" | "premium" | "lifetime"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -319,6 +524,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["user", "admin"],
+      subscription_tier: ["free", "premium", "lifetime"],
+    },
   },
 } as const

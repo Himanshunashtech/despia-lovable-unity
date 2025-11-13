@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Flame, Droplet, Wheat, Zap, Apple } from 'lucide-react';
-import { formatDistanceToNow, format } from 'date-fns';
+import { format } from 'date-fns';
 import CircularProgress from './CircularProgress';
+import WaterLogger from './WaterLogger';
+import AISuggestions from './AISuggestions';
 
 interface HomeTabProps {
   onRefresh: () => void;
@@ -16,7 +17,7 @@ const HomeTab = ({ onRefresh }: HomeTabProps) => {
   const [dailySummary, setDailySummary] = useState<any>(null);
   const [todayLogs, setTodayLogs] = useState<any[]>([]);
   const [activeDay, setActiveDay] = useState<'today' | 'yesterday'>('today');
-  const [streak, setStreak] = useState(15);
+  const [waterTotal, setWaterTotal] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -65,6 +66,17 @@ const HomeTab = ({ onRefresh }: HomeTabProps) => {
         .order('created_at', { ascending: false });
 
       setTodayLogs(logsData || []);
+
+      // Fetch water logs for today
+      const { data: waterData } = await supabase
+        .from('water_logs')
+        .select('amount_ml')
+        .eq('user_id', user.id)
+        .gte('logged_at', startOfDay.toISOString())
+        .lte('logged_at', endOfDay.toISOString());
+
+      const totalWater = waterData?.reduce((sum, log) => sum + log.amount_ml, 0) || 0;
+      setWaterTotal(totalWater);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -180,6 +192,16 @@ const HomeTab = ({ onRefresh }: HomeTabProps) => {
           />
         </Card>
       </div>
+
+      {/* Water Logger */}
+      <WaterLogger
+        todayTotal={waterTotal}
+        goal={profile?.daily_water_goal_ml || 2000}
+        onUpdate={fetchData}
+      />
+
+      {/* AI Suggestions */}
+      <AISuggestions />
 
       {/* Recently Uploaded */}
       <div>

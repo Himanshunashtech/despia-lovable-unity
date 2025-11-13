@@ -39,16 +39,36 @@ const FoodScanner = ({ onClose, onSuccess }: FoodScannerProps) => {
 
     setAnalyzing(true);
     try {
-      const { data, error } = await supabase.functions.invoke('analyze-food-image', {
+      const { data, error } = await supabase.functions.invoke('analyze-food-photo', {
         body: { imageBase64: image },
       });
 
       if (error) throw error;
 
-      setAnalysis(data.analysis);
+      // Transform new API response to match expected format
+      const transformedAnalysis = {
+        foods: data.food_items?.map((item: any) => ({
+          name: item.name,
+          quantity: item.serving_size,
+          serving_size: item.serving_size,
+          calories: item.calories,
+          protein: item.protein_g,
+          carbs: item.carbs_g,
+          fat: item.fat_g,
+          confidence: item.confidence_score || 0.8,
+        })) || [],
+        total_nutrition: {
+          calories: data.total_calories || 0,
+          protein: data.total_protein || 0,
+          carbs: data.total_carbs || 0,
+          fat: data.total_fat || 0,
+        }
+      };
+
+      setAnalysis(transformedAnalysis);
       toast({
         title: 'Analysis complete!',
-        description: `Detected ${data.analysis.foods.length} food item(s)`,
+        description: `Detected ${transformedAnalysis.foods.length} food item(s)`,
       });
     } catch (error: any) {
       toast({
