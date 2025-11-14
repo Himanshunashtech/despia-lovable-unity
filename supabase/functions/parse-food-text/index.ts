@@ -77,7 +77,14 @@ Always respond with valid JSON only.`
     }
 
     const data = await response.json();
-    const aiResponse = data.choices[0].message.content;
+    let aiResponse = data.choices[0].message.content;
+    
+    // Strip markdown code blocks if present
+    if (aiResponse.includes('```json')) {
+      aiResponse = aiResponse.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    } else if (aiResponse.includes('```')) {
+      aiResponse = aiResponse.replace(/```\n?/g, '').trim();
+    }
     
     let parsedData;
     try {

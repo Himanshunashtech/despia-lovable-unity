@@ -39,7 +39,8 @@ const Dashboard = () => {
       .eq('id', user.id)
       .single();
 
-    if (!profile?.onboarding_completed) {
+    const profileData = profile as any;
+    if (!profileData?.onboarding_completed) {
       navigate('/onboarding');
     }
   };
