@@ -41,10 +41,10 @@ const Auth = () => {
         });
         if (error) throw error;
         toast({
-          title: 'Success!',
-          description: 'Account created successfully.',
+          title: 'Success',
+          description: 'Account created! Let\'s set up your profile',
         });
-        navigate('/dashboard');
+        navigate('/onboarding');
       }
     } catch (error: any) {
       toast({
