@@ -29,6 +29,18 @@ const Dashboard = () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       navigate('/auth');
+      return;
+    }
+
+    // Check if onboarding is completed
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('onboarding_completed')
+      .eq('id', user.id)
+      .single();
+
+    if (!profile?.onboarding_completed) {
+      navigate('/onboarding');
     }
   };
 
