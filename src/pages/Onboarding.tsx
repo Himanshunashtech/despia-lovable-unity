@@ -46,10 +46,11 @@ const Onboarding = () => {
       .eq('id', user.id)
       .single();
 
-    if (profile?.onboarding_completed) {
+    const profileData = profile as any;
+    if (profileData?.onboarding_completed) {
       navigate('/dashboard');
-    } else if (profile?.onboarding_step) {
-      setStep(profile.onboarding_step);
+    } else if (profileData?.onboarding_step) {
+      setStep(profileData.onboarding_step as number);
     }
   };
 
