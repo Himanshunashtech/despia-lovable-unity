@@ -251,63 +251,84 @@ export type Database = {
         Row: {
           activity_level: string | null
           created_at: string | null
+          current_weight_kg: number | null
           daily_calorie_goal: number | null
           daily_carbs_goal: number | null
           daily_fat_goal: number | null
           daily_protein_goal: number | null
           daily_water_goal_ml: number | null
+          dietary_preference: string | null
           email: string | null
           full_name: string | null
+          goal_type: string | null
+          height_cm: number | null
           id: string
           onboarding_completed: boolean | null
+          onboarding_step: number | null
           revenue_cat_user_id: string | null
           subscription_expires_at: string | null
           subscription_status: string | null
           subscription_tier:
             | Database["public"]["Enums"]["subscription_tier"]
             | null
+          trial_ends_at: string | null
+          trial_started_at: string | null
           updated_at: string | null
           weight_goal_kg: number | null
         }
         Insert: {
           activity_level?: string | null
           created_at?: string | null
+          current_weight_kg?: number | null
           daily_calorie_goal?: number | null
           daily_carbs_goal?: number | null
           daily_fat_goal?: number | null
           daily_protein_goal?: number | null
           daily_water_goal_ml?: number | null
+          dietary_preference?: string | null
           email?: string | null
           full_name?: string | null
+          goal_type?: string | null
+          height_cm?: number | null
           id: string
           onboarding_completed?: boolean | null
+          onboarding_step?: number | null
           revenue_cat_user_id?: string | null
           subscription_expires_at?: string | null
           subscription_status?: string | null
           subscription_tier?:
             | Database["public"]["Enums"]["subscription_tier"]
             | null
+          trial_ends_at?: string | null
+          trial_started_at?: string | null
           updated_at?: string | null
           weight_goal_kg?: number | null
         }
         Update: {
           activity_level?: string | null
           created_at?: string | null
+          current_weight_kg?: number | null
           daily_calorie_goal?: number | null
           daily_carbs_goal?: number | null
           daily_fat_goal?: number | null
           daily_protein_goal?: number | null
           daily_water_goal_ml?: number | null
+          dietary_preference?: string | null
           email?: string | null
           full_name?: string | null
+          goal_type?: string | null
+          height_cm?: number | null
           id?: string
           onboarding_completed?: boolean | null
+          onboarding_step?: number | null
           revenue_cat_user_id?: string | null
           subscription_expires_at?: string | null
           subscription_status?: string | null
           subscription_tier?:
             | Database["public"]["Enums"]["subscription_tier"]
             | null
+          trial_ends_at?: string | null
+          trial_started_at?: string | null
           updated_at?: string | null
           weight_goal_kg?: number | null
         }

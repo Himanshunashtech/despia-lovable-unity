@@ -7,6 +7,7 @@ import { format } from 'date-fns';
 import CircularProgress from './CircularProgress';
 import WaterLogger from './WaterLogger';
 import AISuggestions from './AISuggestions';
+import ExerciseLogger from './ExerciseLogger';
 
 interface HomeTabProps {
   onRefresh: () => void;
@@ -194,14 +195,18 @@ const HomeTab = ({ onRefresh }: HomeTabProps) => {
       </div>
 
       {/* Water Logger */}
-      <WaterLogger
-        todayTotal={waterTotal}
-        goal={profile?.daily_water_goal_ml || 2000}
-        onUpdate={fetchData}
-      />
+      <div className="grid gap-4 md:grid-cols-2">
+        <WaterLogger
+          todayTotal={waterTotal}
+          goal={profile?.daily_water_goal_ml || 2000}
+          onUpdate={fetchData}
+        />
+        
+        <ExerciseLogger onSuccess={fetchData} />
+      </div>
 
-      {/* AI Suggestions - Temporarily disabled */}
-      {/* <AISuggestions /> */}
+      {/* AI Suggestions */}
+      <AISuggestions />
 
       {/* Recently Uploaded */}
       <div>
