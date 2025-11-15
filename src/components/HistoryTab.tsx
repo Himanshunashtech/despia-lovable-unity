@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { formatDistanceToNow, format } from 'date-fns';
 import { Calendar } from 'lucide-react';
+import ProgressCharts from './ProgressCharts';
 
 const HistoryTab = () => {
   const [logs, setLogs] = useState<any[]>([]);
@@ -62,6 +63,10 @@ const HistoryTab = () => {
 
   return (
     <div className="space-y-6 pb-20">
+      <ProgressCharts />
+      
+      <h2 className="text-2xl font-bold">Food History</h2>
+      
       {Object.entries(groupedLogs).map(([date, dateLogs]) => (
         <div key={date}>
           <h3 className="text-lg font-semibold mb-3 sticky top-0 bg-background py-2">
