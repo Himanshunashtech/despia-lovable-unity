@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Flame, Droplet, Wheat, Zap, Apple } from 'lucide-react';
+import { Flame, Droplet, Wheat, Zap } from 'lucide-react';
 import { format } from 'date-fns';
 import CircularProgress from './CircularProgress';
 import WaterLogger from './WaterLogger';
@@ -119,75 +119,75 @@ const HomeTab = ({ onRefresh }: HomeTabProps) => {
         </Button>
       </div>
 
-      {/* Main Calorie Card */}
-      <Card className="p-6 bg-card/50 backdrop-blur border-border/50">
+      {/* Main Calorie Card - Dark Modern Design */}
+      <Card className="p-6 bg-[#2a2a3a] border-[#3a3a4a]">
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-5xl font-bold mb-2">
+            <div className="text-6xl font-bold mb-2 text-white">
               {Math.round(Math.max(0, caloriesLeft))}
             </div>
-            <p className="text-muted-foreground">
-              {caloriesLeft >= 0 ? 'Calories left' : 'Over goal'}
+            <p className="text-gray-400 text-lg">
+              Calories left
             </p>
           </div>
           <CircularProgress
             value={Math.min(100, calorieProgress)}
-            size={120}
-            strokeWidth={12}
-            color="hsl(var(--primary))"
-            icon={<Flame className="h-8 w-8 text-primary" />}
+            size={140}
+            strokeWidth={14}
+            color="rgb(255, 255, 255)"
+            icon={<Flame className="h-10 w-10 text-white" />}
           />
         </div>
       </Card>
 
-      {/* Macro Cards */}
+      {/* Macro Cards - Dark Modern Design */}
       <div className="grid grid-cols-3 gap-3">
         {/* Protein */}
-        <Card className="p-4 bg-card/50 backdrop-blur border-border/50">
-          <div className="text-2xl font-bold mb-1">
+        <Card className="p-4 bg-[#2a2a3a] border-[#3a3a4a]">
+          <div className="text-2xl font-bold mb-1 text-white">
             {Math.abs(Math.round(proteinDiff))}g
           </div>
-          <p className="text-xs text-muted-foreground mb-3">
+          <p className="text-xs text-gray-400 mb-3">
             Protein {proteinDiff >= 0 ? 'over' : 'left'}
           </p>
           <CircularProgress
             value={Math.min(100, proteinProgress)}
             size={64}
-            strokeWidth={6}
+            strokeWidth={7}
             color="rgb(239, 68, 68)"
             icon={<Zap className="h-4 w-4 text-red-500" />}
           />
         </Card>
 
         {/* Carbs */}
-        <Card className="p-4 bg-card/50 backdrop-blur border-border/50">
-          <div className="text-2xl font-bold mb-1">
+        <Card className="p-4 bg-[#2a2a3a] border-[#3a3a4a]">
+          <div className="text-2xl font-bold mb-1 text-white">
             {Math.abs(Math.round(carbsLeft))}g
           </div>
-          <p className="text-xs text-muted-foreground mb-3">
+          <p className="text-xs text-gray-400 mb-3">
             Carbs {carbsLeft >= 0 ? 'left' : 'over'}
           </p>
           <CircularProgress
             value={Math.min(100, carbsProgress)}
             size={64}
-            strokeWidth={6}
+            strokeWidth={7}
             color="rgb(251, 146, 60)"
             icon={<Wheat className="h-4 w-4 text-orange-400" />}
           />
         </Card>
 
         {/* Fat */}
-        <Card className="p-4 bg-card/50 backdrop-blur border-border/50">
-          <div className="text-2xl font-bold mb-1">
+        <Card className="p-4 bg-[#2a2a3a] border-[#3a3a4a]">
+          <div className="text-2xl font-bold mb-1 text-white">
             {Math.abs(Math.round(fatLeft))}g
           </div>
-          <p className="text-xs text-muted-foreground mb-3">
+          <p className="text-xs text-gray-400 mb-3">
             Fats {fatLeft >= 0 ? 'left' : 'over'}
           </p>
           <CircularProgress
             value={Math.min(100, fatProgress)}
             size={64}
-            strokeWidth={6}
+            strokeWidth={7}
             color="rgb(96, 165, 250)"
             icon={<Droplet className="h-4 w-4 text-blue-400" />}
           />
@@ -222,7 +222,7 @@ const HomeTab = ({ onRefresh }: HomeTabProps) => {
               const itemNames = foodItems.map((item: any) => item.food_name).join(', ');
 
               return (
-                <Card key={log.id} className="p-4 bg-card/50 backdrop-blur border-border/50">
+                <Card key={log.id} className="p-4 bg-[#2a2a3a] border-[#3a3a4a]">
                   <div className="flex gap-4">
                     {log.image_url && (
                       <img
@@ -233,29 +233,29 @@ const HomeTab = ({ onRefresh }: HomeTabProps) => {
                     )}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between mb-2">
-                        <h4 className="font-semibold truncate">
+                        <h4 className="font-semibold truncate text-white">
                           {itemNames || 'Food Log'}
                         </h4>
-                        <span className="text-sm text-muted-foreground whitespace-nowrap ml-2">
+                        <span className="text-sm text-gray-400 whitespace-nowrap ml-2">
                           {format(new Date(log.created_at), 'h:mmaaa')}
                         </span>
                       </div>
                       <div className="flex items-center gap-2 text-sm mb-2">
-                        <Flame className="h-4 w-4 text-orange-500" />
-                        <span className="font-medium">{Math.round(Number(log.total_calories))} kcal</span>
+                        <Flame className="h-4 w-4 text-white" />
+                        <span className="font-medium text-white">{Math.round(Number(log.total_calories))} kcal</span>
                       </div>
                       <div className="flex items-center gap-4 text-sm">
                         <div className="flex items-center gap-1">
                           <Zap className="h-4 w-4 text-red-500" />
-                          <span>{Math.round(Number(log.total_protein))}g</span>
+                          <span className="text-gray-300">{Math.round(Number(log.total_protein))}g</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <Wheat className="h-4 w-4 text-orange-400" />
-                          <span>{Math.round(Number(log.total_carbs))}g</span>
+                          <span className="text-gray-300">{Math.round(Number(log.total_carbs))}g</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <Droplet className="h-4 w-4 text-blue-400" />
-                          <span>{Math.round(Number(log.total_fat))}g</span>
+                          <span className="text-gray-300">{Math.round(Number(log.total_fat))}g</span>
                         </div>
                       </div>
                     </div>

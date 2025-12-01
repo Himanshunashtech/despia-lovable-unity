@@ -5,10 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { LogOut, Save, Moon, Sun } from 'lucide-react';
+import { LogOut, Save, Moon, Sun, User, Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@/components/ThemeProvider';
+import NotificationSettings from '@/components/NotificationSettings';
 
 const ProfileTab = () => {
   const [profile, setProfile] = useState({
@@ -95,105 +97,124 @@ const ProfileTab = () => {
   };
 
   return (
-    <div className="space-y-4 pb-20">
-      <Card>
-        <CardHeader>
-          <CardTitle>Appearance</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              {theme === 'dark' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
-              <Label htmlFor="theme">Dark Mode</Label>
-            </div>
-            <Switch
-              id="theme"
-              checked={theme === 'dark'}
-              onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
-            />
-          </div>
-        </CardContent>
-      </Card>
+    <div className="space-y-6 pb-24">
+      <Tabs defaultValue="profile" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 mb-6">
+          <TabsTrigger value="profile" className="gap-2">
+            <User className="h-4 w-4" />
+            Profile
+          </TabsTrigger>
+          <TabsTrigger value="notifications" className="gap-2">
+            <Bell className="h-4 w-4" />
+            Notifications
+          </TabsTrigger>
+        </TabsList>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Profile Information</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label htmlFor="name">Full Name</Label>
-            <Input
-              id="name"
-              value={profile.full_name}
-              onChange={(e) => setProfile({ ...profile, full_name: e.target.value })}
-              placeholder="Enter your name"
-            />
-          </div>
-          <div>
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              value={profile.email}
-              disabled
-              className="bg-muted"
-            />
-          </div>
-        </CardContent>
-      </Card>
+        <TabsContent value="profile" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Appearance</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  {theme === 'dark' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+                  <Label htmlFor="theme">Dark Mode</Label>
+                </div>
+                <Switch
+                  id="theme"
+                  checked={theme === 'dark'}
+                  onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
+                />
+              </div>
+            </CardContent>
+          </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Daily Goals</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label htmlFor="calories">Calories (kcal)</Label>
-            <Input
-              id="calories"
-              type="number"
-              value={profile.daily_calorie_goal}
-              onChange={(e) => setProfile({ ...profile, daily_calorie_goal: parseInt(e.target.value) })}
-            />
-          </div>
-          <div>
-            <Label htmlFor="protein">Protein (g)</Label>
-            <Input
-              id="protein"
-              type="number"
-              value={profile.daily_protein_goal}
-              onChange={(e) => setProfile({ ...profile, daily_protein_goal: parseInt(e.target.value) })}
-            />
-          </div>
-          <div>
-            <Label htmlFor="carbs">Carbs (g)</Label>
-            <Input
-              id="carbs"
-              type="number"
-              value={profile.daily_carbs_goal}
-              onChange={(e) => setProfile({ ...profile, daily_carbs_goal: parseInt(e.target.value) })}
-            />
-          </div>
-          <div>
-            <Label htmlFor="fat">Fat (g)</Label>
-            <Input
-              id="fat"
-              type="number"
-              value={profile.daily_fat_goal}
-              onChange={(e) => setProfile({ ...profile, daily_fat_goal: parseInt(e.target.value) })}
-            />
-          </div>
-        </CardContent>
-      </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Profile Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="name">Full Name</Label>
+                <Input
+                  id="name"
+                  value={profile.full_name}
+                  onChange={(e) => setProfile({ ...profile, full_name: e.target.value })}
+                  placeholder="Enter your name"
+                />
+              </div>
+              <div>
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  value={profile.email}
+                  disabled
+                  className="bg-muted"
+                />
+              </div>
+            </CardContent>
+          </Card>
 
-      <Button onClick={handleSave} disabled={loading} className="w-full" size="lg">
-        <Save className="mr-2 h-5 w-5" />
-        Save Changes
-      </Button>
+          <Card>
+            <CardHeader>
+              <CardTitle>Daily Goals</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="calories">Calories (kcal)</Label>
+                <Input
+                  id="calories"
+                  type="number"
+                  value={profile.daily_calorie_goal}
+                  onChange={(e) => setProfile({ ...profile, daily_calorie_goal: parseInt(e.target.value) })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="protein">Protein (g)</Label>
+                <Input
+                  id="protein"
+                  type="number"
+                  value={profile.daily_protein_goal}
+                  onChange={(e) => setProfile({ ...profile, daily_protein_goal: parseInt(e.target.value) })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="carbs">Carbs (g)</Label>
+                <Input
+                  id="carbs"
+                  type="number"
+                  value={profile.daily_carbs_goal}
+                  onChange={(e) => setProfile({ ...profile, daily_carbs_goal: parseInt(e.target.value) })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="fat">Fat (g)</Label>
+                <Input
+                  id="fat"
+                  type="number"
+                  value={profile.daily_fat_goal}
+                  onChange={(e) => setProfile({ ...profile, daily_fat_goal: parseInt(e.target.value) })}
+                />
+              </div>
+            </CardContent>
+          </Card>
 
-      <Button onClick={handleSignOut} variant="destructive" className="w-full" size="lg">
-        <LogOut className="mr-2 h-5 w-5" />
-        Sign Out
-      </Button>
+          <Button onClick={handleSave} disabled={loading} className="w-full" size="lg">
+            <Save className="mr-2 h-5 w-5" />
+            Save Changes
+          </Button>
+
+          <Button onClick={handleSignOut} variant="destructive" className="w-full" size="lg">
+            <LogOut className="mr-2 h-5 w-5" />
+            Sign Out
+          </Button>
+        </TabsContent>
+
+        <TabsContent value="notifications">
+          <NotificationSettings />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

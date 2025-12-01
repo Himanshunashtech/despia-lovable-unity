@@ -5,6 +5,7 @@ import TabNavigation from '@/components/TabNavigation';
 import ProfileTab from '@/components/ProfileTab';
 import HistoryTab from '@/components/HistoryTab';
 import HomeTab from '@/components/HomeTab';
+import RecipesTab from '@/components/RecipesTab';
 import FoodScanner from '@/components/FoodScanner';
 import VoiceInput from '@/components/VoiceInput';
 import BarcodeScanner from '@/components/BarcodeScanner';
@@ -61,6 +62,8 @@ const Dashboard = () => {
     switch (activeTab) {
       case 'home':
         return <HomeTab key={refreshKey} onRefresh={handleRefresh} />;
+      case 'recipes':
+        return <RecipesTab />;
       case 'history':
         return <HistoryTab />;
       case 'profile':
@@ -71,8 +74,8 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <TabNavigation 
+    <div className="min-h-screen bg-[#1a1a2e]">
+      <TabNavigation
         activeTab={activeTab} 
         onTabChange={setActiveTab}
         onAddFood={() => setShowAddDialog(true)}
