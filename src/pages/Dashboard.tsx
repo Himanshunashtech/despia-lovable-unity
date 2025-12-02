@@ -11,9 +11,11 @@ import VoiceInput from '@/components/VoiceInput';
 import BarcodeScanner from '@/components/BarcodeScanner';
 import BarcodeHistory from '@/components/BarcodeHistory';
 import MealPlanner from '@/components/MealPlanner';
+import AchievementCelebration from '@/components/AchievementCelebration';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Camera, Mic, ScanBarcode, History, Calendar } from 'lucide-react';
+import { useAchievements } from '@/hooks/useAchievements';
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('home');
@@ -25,6 +27,7 @@ const Dashboard = () => {
   const [showMealPlanner, setShowMealPlanner] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const navigate = useNavigate();
+  const { newAchievement, checkAndUpdateStats, clearAchievement } = useAchievements();
 
   useEffect(() => {
     checkUser();
@@ -54,7 +57,8 @@ const Dashboard = () => {
     setRefreshKey(prev => prev + 1);
   };
 
-  const handleFoodAdded = () => {
+  const handleFoodAdded = async () => {
+    await checkAndUpdateStats('food');
     setShowScanner(false);
     setShowVoice(false);
     setShowBarcode(false);
@@ -201,6 +205,12 @@ const Dashboard = () => {
           onClose={() => setShowMealPlanner(false)}
         />
       )}
+
+      {/* Achievement Celebration */}
+      <AchievementCelebration
+        achievement={newAchievement}
+        onClose={clearAchievement}
+      />
     </div>
   );
 };

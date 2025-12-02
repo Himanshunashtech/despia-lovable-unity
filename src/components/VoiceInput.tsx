@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Mic, Loader2, Send, MicOff } from 'lucide-react';
+import { useAchievements } from '@/hooks/useAchievements';
 
 interface VoiceInputProps {
   onClose: () => void;
@@ -20,6 +21,7 @@ const VoiceInput = ({ onClose, onSuccess }: VoiceInputProps) => {
   const [isListening, setIsListening] = useState(false);
   const [recognition, setRecognition] = useState<any>(null);
   const { toast } = useToast();
+  const { checkAndUpdateStats } = useAchievements();
 
   useEffect(() => {
     // Initialize speech recognition
@@ -175,6 +177,10 @@ const VoiceInput = ({ onClose, onSuccess }: VoiceInputProps) => {
         title: 'Food logged!',
         description: `Added ${parsedData.foods.length} item(s) to your log`,
       });
+      
+      // Check achievements
+      await checkAndUpdateStats('food');
+      
       onSuccess();
     } catch (error: any) {
       toast({
