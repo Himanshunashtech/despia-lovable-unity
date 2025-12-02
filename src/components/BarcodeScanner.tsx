@@ -56,6 +56,41 @@ const BarcodeScanner = ({ open, onClose, onSuccess }: BarcodeScannerProps) => {
       if (error) throw error;
 
       if (data.success) {
+        // Save to barcode history
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: existing } = await supabase
+            .from('barcode_history')
+            .select('*')
+            .eq('user_id', user.id)
+            .eq('barcode', barcode)
+            .maybeSingle();
+
+          if (existing) {
+            await supabase
+              .from('barcode_history')
+              .update({
+                scan_count: existing.scan_count + 1,
+                last_scanned_at: new Date().toISOString(),
+              })
+              .eq('id', existing.id);
+          } else {
+            await supabase
+              .from('barcode_history')
+              .insert({
+                user_id: user.id,
+                barcode,
+                food_name: data.food.food_name,
+                brand: data.food.brand,
+                calories: data.food.calories,
+                protein: data.food.protein_g,
+                carbs: data.food.carbs_g,
+                fat: data.food.fat_g,
+                serving_size: data.food.serving_size,
+              });
+          }
+        }
+
         onSuccess(data.food);
         toast({
           title: 'Product Found!',

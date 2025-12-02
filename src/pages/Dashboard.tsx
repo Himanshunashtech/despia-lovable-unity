@@ -9,9 +9,11 @@ import RecipesTab from '@/components/RecipesTab';
 import FoodScanner from '@/components/FoodScanner';
 import VoiceInput from '@/components/VoiceInput';
 import BarcodeScanner from '@/components/BarcodeScanner';
+import BarcodeHistory from '@/components/BarcodeHistory';
+import MealPlanner from '@/components/MealPlanner';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Camera, Mic, ScanBarcode } from 'lucide-react';
+import { Camera, Mic, ScanBarcode, History, Calendar } from 'lucide-react';
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('home');
@@ -19,6 +21,8 @@ const Dashboard = () => {
   const [showScanner, setShowScanner] = useState(false);
   const [showVoice, setShowVoice] = useState(false);
   const [showBarcode, setShowBarcode] = useState(false);
+  const [showBarcodeHistory, setShowBarcodeHistory] = useState(false);
+  const [showMealPlanner, setShowMealPlanner] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const navigate = useNavigate();
 
@@ -124,6 +128,30 @@ const Dashboard = () => {
               <ScanBarcode className="mr-3 h-6 w-6" />
               Scan Barcode
             </Button>
+            <Button
+              onClick={() => {
+                setShowAddDialog(false);
+                setShowBarcodeHistory(true);
+              }}
+              variant="outline"
+              className="w-full h-20 text-lg"
+              size="lg"
+            >
+              <History className="mr-3 h-6 w-6" />
+              Barcode History
+            </Button>
+            <Button
+              onClick={() => {
+                setShowAddDialog(false);
+                setShowMealPlanner(true);
+              }}
+              variant="outline"
+              className="w-full h-20 text-lg"
+              size="lg"
+            >
+              <Calendar className="mr-3 h-6 w-6" />
+              Meal Planner
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
@@ -150,6 +178,27 @@ const Dashboard = () => {
           open={showBarcode}
           onClose={() => setShowBarcode(false)}
           onSuccess={handleFoodAdded}
+        />
+      )}
+
+      {/* Barcode History */}
+      {showBarcodeHistory && (
+        <BarcodeHistory
+          open={showBarcodeHistory}
+          onClose={() => setShowBarcodeHistory(false)}
+          onRescan={(barcode) => {
+            setShowBarcodeHistory(false);
+            setShowBarcode(true);
+            // The barcode will be auto-scanned when the scanner opens
+          }}
+        />
+      )}
+
+      {/* Meal Planner */}
+      {showMealPlanner && (
+        <MealPlanner
+          open={showMealPlanner}
+          onClose={() => setShowMealPlanner(false)}
         />
       )}
     </div>

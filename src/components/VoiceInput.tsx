@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Mic, Loader2, Send } from 'lucide-react';
+import { Mic, Loader2, Send, MicOff } from 'lucide-react';
 
 interface VoiceInputProps {
   onClose: () => void;
@@ -17,7 +17,67 @@ const VoiceInput = ({ onClose, onSuccess }: VoiceInputProps) => {
   const [text, setText] = useState('');
   const [mealType, setMealType] = useState<string>('lunch');
   const [processing, setProcessing] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [recognition, setRecognition] = useState<any>(null);
   const { toast } = useToast();
+
+  useEffect(() => {
+    // Initialize speech recognition
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+      const recognitionInstance = new SpeechRecognition();
+      recognitionInstance.continuous = false;
+      recognitionInstance.interimResults = false;
+      recognitionInstance.lang = 'en-US';
+
+      recognitionInstance.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        setText(prev => prev + ' ' + transcript);
+        setIsListening(false);
+      };
+
+      recognitionInstance.onerror = (event: any) => {
+        console.error('Speech recognition error:', event.error);
+        setIsListening(false);
+        toast({
+          title: 'Voice recognition error',
+          description: 'Could not recognize speech. Please try again.',
+          variant: 'destructive',
+        });
+      };
+
+      recognitionInstance.onend = () => {
+        setIsListening(false);
+      };
+
+      setRecognition(recognitionInstance);
+    }
+
+    return () => {
+      if (recognition) {
+        recognition.stop();
+      }
+    };
+  }, []);
+
+  const toggleListening = () => {
+    if (!recognition) {
+      toast({
+        title: 'Voice recognition not supported',
+        description: 'Your browser does not support speech recognition.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (isListening) {
+      recognition.stop();
+      setIsListening(false);
+    } else {
+      recognition.start();
+      setIsListening(true);
+    }
+  };
 
   const parseAndSave = async () => {
     if (!text.trim()) {
@@ -136,7 +196,28 @@ const VoiceInput = ({ onClose, onSuccess }: VoiceInputProps) => {
 
         <div className="space-y-4">
           <div>
-            <Label htmlFor="text">What did you eat?</Label>
+            <div className="flex items-center justify-between mb-2">
+              <Label htmlFor="text">What did you eat?</Label>
+              <Button
+                type="button"
+                variant={isListening ? "destructive" : "outline"}
+                size="sm"
+                onClick={toggleListening}
+                disabled={processing}
+              >
+                {isListening ? (
+                  <>
+                    <MicOff className="mr-2 h-4 w-4" />
+                    Stop Listening
+                  </>
+                ) : (
+                  <>
+                    <Mic className="mr-2 h-4 w-4" />
+                    Voice Input
+                  </>
+                )}
+              </Button>
+            </div>
             <Textarea
               id="text"
               value={text}
@@ -146,7 +227,7 @@ const VoiceInput = ({ onClose, onSuccess }: VoiceInputProps) => {
               className="mt-1"
             />
             <p className="text-xs text-muted-foreground mt-1">
-              Describe your meal in natural language
+              {isListening ? 'Listening... Speak now' : 'Describe your meal in natural language or use voice input'}
             </p>
           </div>
 
