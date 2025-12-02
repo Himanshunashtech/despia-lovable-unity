@@ -2,12 +2,16 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Flame, Droplet, Wheat, Zap } from 'lucide-react';
+import { Flame, Droplet, Wheat, Zap, Trophy } from 'lucide-react';
 import { format } from 'date-fns';
 import CircularProgress from './CircularProgress';
 import WaterLogger from './WaterLogger';
 import AISuggestions from './AISuggestions';
 import ExerciseLogger from './ExerciseLogger';
+import StreakCounter from './StreakCounter';
+import AchievementsDisplay from './AchievementsDisplay';
+import AchievementCelebration from './AchievementCelebration';
+import { useAchievements } from '@/hooks/useAchievements';
 
 interface HomeTabProps {
   onRefresh: () => void;
@@ -20,6 +24,8 @@ const HomeTab = ({ onRefresh }: HomeTabProps) => {
   const [activeDay, setActiveDay] = useState<'today' | 'yesterday'>('today');
   const [waterTotal, setWaterTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [showAchievements, setShowAchievements] = useState(false);
+  const { newAchievement, checkAndUpdateStats, clearAchievement } = useAchievements();
 
   useEffect(() => {
     fetchData();
@@ -95,12 +101,39 @@ const HomeTab = ({ onRefresh }: HomeTabProps) => {
   const carbsProgress = ((dailySummary?.total_carbs || 0) / (profile?.daily_carbs_goal || 250)) * 100;
   const fatProgress = ((dailySummary?.total_fat || 0) / (profile?.daily_fat_goal || 65)) * 100;
 
+  const handleWaterUpdate = async () => {
+    await checkAndUpdateStats('water');
+    await fetchData();
+  };
+
+  const handleExerciseSuccess = async () => {
+    await checkAndUpdateStats('exercise');
+    await fetchData();
+  };
+
   if (loading) {
     return <div className="text-center py-8 text-muted-foreground">Loading...</div>;
   }
 
   return (
     <div className="space-y-6 pb-24">
+      {/* Header with Achievements Button */}
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-foreground">Ella AI</h1>
+        <Button
+          onClick={() => setShowAchievements(true)}
+          variant="outline"
+          size="sm"
+          className="gap-2"
+        >
+          <Trophy className="h-4 w-4 text-yellow-500" />
+          Achievements
+        </Button>
+      </div>
+
+      {/* Streak Counter */}
+      <StreakCounter />
+
       {/* Day Selector */}
       <div className="flex gap-4">
         <Button
@@ -199,10 +232,10 @@ const HomeTab = ({ onRefresh }: HomeTabProps) => {
         <WaterLogger
           todayTotal={waterTotal}
           goal={profile?.daily_water_goal_ml || 2000}
-          onUpdate={fetchData}
+          onUpdate={handleWaterUpdate}
         />
         
-        <ExerciseLogger onSuccess={fetchData} />
+        <ExerciseLogger onSuccess={handleExerciseSuccess} />
       </div>
 
       {/* AI Suggestions */}
@@ -266,6 +299,18 @@ const HomeTab = ({ onRefresh }: HomeTabProps) => {
           )}
         </div>
       </div>
+
+      {/* Achievements Display */}
+      <AchievementsDisplay
+        open={showAchievements}
+        onClose={() => setShowAchievements(false)}
+      />
+
+      {/* Achievement Celebration */}
+      <AchievementCelebration
+        achievement={newAchievement}
+        onClose={clearAchievement}
+      />
     </div>
   );
 };
