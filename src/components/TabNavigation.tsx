@@ -1,4 +1,4 @@
-import { Home, ChefHat, BarChart3, Settings, Plus, Bell, Flame } from 'lucide-react';
+import { Home, ChefHat, BarChart3, Settings, Plus, Bell, Flame, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
@@ -15,7 +15,8 @@ const tabs = [
   { id: 'home', label: 'Home', icon: Home },
   { id: 'recipes', label: 'Recipes', icon: ChefHat },
   { id: 'history', label: 'Analytics', icon: BarChart3 },
-  { id: 'profile', label: 'Settings', icon: Settings },
+  { id: 'profile', label: 'Profile', icon: User },
+  { id: 'settings', label: 'Settings', icon: Settings },
 ];
 
 const TabNavigation = ({ activeTab, onTabChange, onAddFood, streak = 0 }: TabNavigationProps) => {
@@ -30,32 +31,15 @@ const TabNavigation = ({ activeTab, onTabChange, onAddFood, streak = 0 }: TabNav
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Calculate streak from food logs
-      const { data: logs } = await supabase
-        .from('food_logs')
-        .select('created_at')
+      // Get streak from user_stats table
+      const { data: stats } = await supabase
+        .from('user_stats')
+        .select('current_streak')
         .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(30);
+        .single();
 
-      if (logs) {
-        let streak = 0;
-        const today = new Date().toDateString();
-        const yesterday = new Date(Date.now() - 86400000).toDateString();
-        
-        const logDates = new Set(logs.map(log => new Date(log.created_at).toDateString()));
-        
-        if (logDates.has(today) || logDates.has(yesterday)) {
-          streak = 1;
-          let checkDate = new Date(logDates.has(today) ? Date.now() - 86400000 : Date.now() - 86400000 * 2);
-          
-          while (logDates.has(checkDate.toDateString())) {
-            streak++;
-            checkDate = new Date(checkDate.getTime() - 86400000);
-          }
-        }
-        
-        setCurrentStreak(streak);
+      if (stats) {
+        setCurrentStreak(stats.current_streak || 0);
       }
     } catch (error) {
       console.error('Error fetching streak:', error);
@@ -87,7 +71,7 @@ const TabNavigation = ({ activeTab, onTabChange, onAddFood, streak = 0 }: TabNav
 
       {/* Bottom Navigation - Dark Modern Design */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#1a1a2e] border-t border-[#2a2a3a]">
-        <div className="max-w-2xl mx-auto px-4 h-20 flex items-center justify-around">
+        <div className="max-w-2xl mx-auto px-2 h-20 flex items-center justify-around">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -96,12 +80,12 @@ const TabNavigation = ({ activeTab, onTabChange, onAddFood, streak = 0 }: TabNav
                 key={tab.id}
                 onClick={() => onTabChange(tab.id)}
                 className={cn(
-                  "flex flex-col items-center gap-1 transition-colors",
+                  "flex flex-col items-center gap-1 transition-colors px-3 py-2",
                   isActive ? 'text-white' : 'text-gray-500'
                 )}
               >
-                <Icon className={cn("h-6 w-6", isActive && 'scale-110')} />
-                <span className="text-xs font-medium">{tab.label}</span>
+                <Icon className={cn("h-5 w-5", isActive && 'scale-110')} />
+                <span className="text-[10px] font-medium">{tab.label}</span>
               </button>
             );
           })}
