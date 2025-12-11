@@ -6,6 +6,7 @@ import ProfileTab from '@/components/ProfileTab';
 import HistoryTab from '@/components/HistoryTab';
 import HomeTab from '@/components/HomeTab';
 import RecipesTab from '@/components/RecipesTab';
+import SettingsTab from '@/components/SettingsTab';
 import FoodScanner from '@/components/FoodScanner';
 import VoiceInput from '@/components/VoiceInput';
 import BarcodeScanner from '@/components/BarcodeScanner';
@@ -76,6 +77,8 @@ const Dashboard = () => {
         return <HistoryTab />;
       case 'profile':
         return <ProfileTab />;
+      case 'settings':
+        return <SettingsTab />;
       default:
         return null;
     }
