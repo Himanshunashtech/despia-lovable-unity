@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, Plus, Flame, Zap, Wheat, Droplet, ChefHat, Apple, Trash2, Clock, Users } from 'lucide-react';
+import { Search, Plus, Flame, Zap, Wheat, Droplet, ChefHat, Apple, Trash2, Clock, Users, ImagePlus, X } from 'lucide-react';
 
 interface Ingredient {
   food_name: string;
@@ -41,6 +41,29 @@ const RecipesTab = () => {
   const [newIngredient, setNewIngredient] = useState({ food_name: '', quantity: '', calories: 0, protein: 0, carbs: 0, fat: 0 });
   const [isPublic, setIsPublic] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [recipeImage, setRecipeImage] = useState<File | null>(null);
+  const [recipeImagePreview, setRecipeImagePreview] = useState<string | null>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setRecipeImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setRecipeImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = () => {
+    setRecipeImage(null);
+    setRecipeImagePreview(null);
+    if (imageInputRef.current) {
+      imageInputRef.current.value = '';
+    }
+  };
 
   useEffect(() => {
     fetchData();
@@ -154,6 +177,26 @@ const RecipesTab = () => {
       if (!user) return;
 
       const totals = getTotals();
+      let imageUrl: string | null = null;
+
+      // Upload image if provided
+      if (recipeImage) {
+        const fileExt = recipeImage.name.split('.').pop();
+        const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+        
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('recipe-images')
+          .upload(fileName, recipeImage);
+
+        if (uploadError) {
+          console.error('Error uploading image:', uploadError);
+        } else {
+          const { data: urlData } = supabase.storage
+            .from('recipe-images')
+            .getPublicUrl(fileName);
+          imageUrl = urlData.publicUrl;
+        }
+      }
 
       // Create recipe
       const { data: recipe, error: recipeError } = await supabase
@@ -171,6 +214,7 @@ const RecipesTab = () => {
           total_carbs: totals.carbs,
           total_fat: totals.fat,
           is_public: isPublic,
+          image_url: imageUrl,
         })
         .select()
         .single();
@@ -205,6 +249,8 @@ const RecipesTab = () => {
       setServings('1');
       setIngredients([]);
       setIsPublic(false);
+      setRecipeImage(null);
+      setRecipeImagePreview(null);
       setShowCreateRecipe(false);
 
       // Refresh recipes
@@ -274,37 +320,43 @@ const RecipesTab = () => {
             foodItems.map((food) => (
               <Card
                 key={food.id}
-                className="p-4 bg-card/50 backdrop-blur border-border/50 cursor-pointer hover:bg-card/70 transition-colors"
+                className="p-3 bg-card/50 backdrop-blur border-border/50 cursor-pointer hover:bg-card/70 transition-colors"
                 onClick={() => {
                   setSelectedItem(food);
                   setShowAddDialog(true);
                 }}
               >
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-semibold">{food.food_name}</h4>
-                  <Button size="sm" variant="ghost">
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
-                {food.brand && (
-                  <p className="text-sm text-muted-foreground mb-2">{food.brand}</p>
-                )}
-                <div className="flex items-center gap-4 text-sm">
-                  <div className="flex items-center gap-1">
-                    <Flame className="h-4 w-4 text-orange-500" />
-                    <span>{Math.round(food.calories || 0)}cal</span>
+                <div className="flex gap-3">
+                  {/* Food Image */}
+                  <div className="w-16 h-16 rounded-lg overflow-hidden bg-muted flex-shrink-0">
+                    {food.image_url ? (
+                      <img 
+                        src={food.image_url} 
+                        alt={food.food_name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-2xl">
+                        🍽️
+                      </div>
+                    )}
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Zap className="h-4 w-4 text-red-500" />
-                    <span>{Math.round(food.protein_g || 0)}g</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Wheat className="h-4 w-4 text-orange-400" />
-                    <span>{Math.round(food.carbs_g || 0)}g</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Droplet className="h-4 w-4 text-blue-400" />
-                    <span>{Math.round(food.fat_g || 0)}g</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-1">
+                      <h4 className="font-semibold text-sm truncate">{food.food_name}</h4>
+                      <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    {food.brand && (
+                      <p className="text-xs text-muted-foreground mb-1 truncate">{food.brand}</p>
+                    )}
+                    <div className="flex items-center gap-3 text-xs">
+                      <span className="text-orange-500">{Math.round(food.calories || 0)}cal</span>
+                      <span className="text-red-500">{Math.round(food.protein_g || 0)}g P</span>
+                      <span className="text-orange-400">{Math.round(food.carbs_g || 0)}g C</span>
+                      <span className="text-blue-400">{Math.round(food.fat_g || 0)}g F</span>
+                    </div>
                   </div>
                 </div>
               </Card>
@@ -327,16 +379,31 @@ const RecipesTab = () => {
             recipes.map((recipe) => (
               <Card
                 key={recipe.id}
-                className="p-4 bg-card/50 backdrop-blur border-border/50"
+                className="p-3 bg-card/50 backdrop-blur border-border/50"
               >
-                <div className="flex gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-semibold">{recipe.name}</h4>
+                <div className="flex gap-3">
+                  {/* Recipe Image */}
+                  <div className="w-20 h-20 rounded-lg overflow-hidden bg-muted flex-shrink-0">
+                    {recipe.image_url ? (
+                      <img 
+                        src={recipe.image_url} 
+                        alt={recipe.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-3xl">
+                        🍳
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-1">
+                      <h4 className="font-semibold text-sm truncate">{recipe.name}</h4>
                       <div className="flex gap-1">
                         <Button 
                           size="sm" 
                           variant="ghost"
+                          className="h-6 w-6 p-0"
                           onClick={() => {
                             setSelectedItem(recipe);
                             setShowAddDialog(true);
@@ -347,7 +414,7 @@ const RecipesTab = () => {
                         <Button 
                           size="sm" 
                           variant="ghost"
-                          className="text-destructive hover:text-destructive"
+                          className="h-6 w-6 p-0 text-destructive hover:text-destructive"
                           onClick={() => deleteRecipe(recipe.id)}
                         >
                           <Trash2 className="h-4 w-4" />
@@ -355,47 +422,29 @@ const RecipesTab = () => {
                       </div>
                     </div>
                     {recipe.description && (
-                      <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
+                      <p className="text-xs text-muted-foreground mb-1 line-clamp-1">
                         {recipe.description}
                       </p>
                     )}
-                    <div className="flex items-center gap-3 text-xs text-muted-foreground mb-2">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
                       {recipe.prep_time_minutes && (
-                        <span className="flex items-center gap-1">
+                        <span className="flex items-center gap-0.5">
                           <Clock className="h-3 w-3" />
-                          Prep: {recipe.prep_time_minutes}m
-                        </span>
-                      )}
-                      {recipe.cook_time_minutes && (
-                        <span className="flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          Cook: {recipe.cook_time_minutes}m
+                          {recipe.prep_time_minutes}m
                         </span>
                       )}
                       {recipe.servings && (
-                        <span className="flex items-center gap-1">
+                        <span className="flex items-center gap-0.5">
                           <Users className="h-3 w-3" />
-                          {recipe.servings} servings
+                          {recipe.servings}
                         </span>
                       )}
                     </div>
-                    <div className="flex items-center gap-4 text-sm">
-                      <div className="flex items-center gap-1">
-                        <Flame className="h-4 w-4 text-orange-500" />
-                        <span>{Math.round(recipe.total_calories || 0)}cal</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Zap className="h-4 w-4 text-red-500" />
-                        <span>{Math.round(recipe.total_protein || 0)}g</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Wheat className="h-4 w-4 text-orange-400" />
-                        <span>{Math.round(recipe.total_carbs || 0)}g</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Droplet className="h-4 w-4 text-blue-400" />
-                        <span>{Math.round(recipe.total_fat || 0)}g</span>
-                      </div>
+                    <div className="flex items-center gap-2 text-xs">
+                      <span className="text-orange-500">{Math.round(recipe.total_calories || 0)}cal</span>
+                      <span className="text-red-500">{Math.round(recipe.total_protein || 0)}g P</span>
+                      <span className="text-orange-400">{Math.round(recipe.total_carbs || 0)}g C</span>
+                      <span className="text-blue-400">{Math.round(recipe.total_fat || 0)}g F</span>
                     </div>
                   </div>
                 </div>
@@ -453,6 +502,43 @@ const RecipesTab = () => {
             <DialogTitle>Create New Recipe</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
+            {/* Recipe Image Upload */}
+            <div>
+              <Label className="mb-2 block">Recipe Image</Label>
+              {recipeImagePreview ? (
+                <div className="relative w-full h-40 rounded-lg overflow-hidden">
+                  <img 
+                    src={recipeImagePreview} 
+                    alt="Recipe preview" 
+                    className="w-full h-full object-cover"
+                  />
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    className="absolute top-2 right-2 h-8 w-8 p-0"
+                    onClick={removeImage}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <div
+                  className="w-full h-32 border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-primary/50 transition-colors"
+                  onClick={() => imageInputRef.current?.click()}
+                >
+                  <ImagePlus className="h-8 w-8 text-muted-foreground mb-2" />
+                  <span className="text-sm text-muted-foreground">Click to upload image</span>
+                </div>
+              )}
+              <input
+                ref={imageInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageSelect}
+                className="hidden"
+              />
+            </div>
+
             <div>
               <Label className="mb-2 block">Recipe Name *</Label>
               <Input

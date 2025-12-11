@@ -182,6 +182,7 @@ export type Database = {
           fiber_g: number | null
           food_name: string
           id: string
+          image_url: string | null
           protein_g: number | null
           serving_size: string | null
           serving_unit: string | null
@@ -201,6 +202,7 @@ export type Database = {
           fiber_g?: number | null
           food_name: string
           id?: string
+          image_url?: string | null
           protein_g?: number | null
           serving_size?: string | null
           serving_unit?: string | null
@@ -220,6 +222,7 @@ export type Database = {
           fiber_g?: number | null
           food_name?: string
           id?: string
+          image_url?: string | null
           protein_g?: number | null
           serving_size?: string | null
           serving_unit?: string | null
