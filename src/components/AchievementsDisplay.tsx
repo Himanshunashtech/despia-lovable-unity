@@ -7,8 +7,9 @@ import { useToast } from '@/hooks/use-toast';
 import { Trophy, Loader2, Lock } from 'lucide-react';
 
 interface AchievementsDisplayProps {
-  open: boolean;
-  onClose: () => void;
+  open?: boolean;
+  onClose?: () => void;
+  compact?: boolean;
 }
 
 interface Achievement {
@@ -29,7 +30,7 @@ interface UserAchievement {
   progress: number;
 }
 
-const AchievementsDisplay = ({ open, onClose }: AchievementsDisplayProps) => {
+const AchievementsDisplay = ({ open, onClose, compact = false }: AchievementsDisplayProps) => {
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [userAchievements, setUserAchievements] = useState<UserAchievement[]>([]);
   const [stats, setStats] = useState<any>(null);
@@ -37,10 +38,10 @@ const AchievementsDisplay = ({ open, onClose }: AchievementsDisplayProps) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    if (open) {
+    if (open || compact) {
       loadData();
     }
-  }, [open]);
+  }, [open, compact]);
 
   const loadData = async () => {
     setLoading(true);
@@ -147,6 +148,56 @@ const AchievementsDisplay = ({ open, onClose }: AchievementsDisplayProps) => {
     }
   };
 
+  // Compact inline view for Profile tab
+  if (compact) {
+    const earnedAchievements = achievements.filter(a => isEarned(a.id));
+    const recentAchievements = earnedAchievements.slice(0, 4);
+
+    return (
+      <div className="space-y-3">
+        {loading ? (
+          <div className="flex justify-center py-4">
+            <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          </div>
+        ) : (
+          <>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-muted-foreground">
+                {earnedAchievements.length} / {achievements.length} unlocked
+              </span>
+              {stats && (
+                <span className="text-sm font-medium text-primary">
+                  {stats.total_points || 0} pts
+                </span>
+              )}
+            </div>
+            <div className="grid grid-cols-4 gap-2">
+              {recentAchievements.length > 0 ? (
+                recentAchievements.map((achievement) => (
+                  <div
+                    key={achievement.id}
+                    className="flex flex-col items-center p-2 rounded-lg bg-primary/10 border border-primary/20"
+                    title={achievement.name}
+                  >
+                    <span className="text-2xl">{achievement.icon}</span>
+                    <Badge className={`${getBadgeColor(achievement.badge_type)} text-xs mt-1`}>
+                      {achievement.badge_type}
+                    </Badge>
+                  </div>
+                ))
+              ) : (
+                <div className="col-span-4 text-center text-sm text-muted-foreground py-4">
+                  No achievements yet. Keep logging!
+                </div>
+              )}
+            </div>
+          </>
+        )}
+      </div>
+    );
+  }
+
+  // Full dialog view
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
