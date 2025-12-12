@@ -140,8 +140,8 @@ const Onboarding = () => {
       case 1:
         return (
           <div className="space-y-6 text-center">
-            <Apple className="h-20 w-20 mx-auto text-primary" />
-            <h1 className="text-4xl font-bold">Welcome to Cal AI</h1>
+            <span className="text-7xl block mx-auto">🍎</span>
+            <h1 className="text-4xl font-bold">Welcome to Ella AI</h1>
             <p className="text-xl text-muted-foreground">Your AI-powered nutrition companion</p>
             <p className="text-muted-foreground">Let's personalize your experience in just a few steps</p>
           </div>
@@ -371,7 +371,7 @@ const Onboarding = () => {
             <div className="text-center">
               <Crown className="h-20 w-20 mx-auto text-yellow-500 mb-4" />
               <h2 className="text-3xl font-bold mb-2">Unlock Premium Features</h2>
-              <p className="text-muted-foreground">Get the most out of Cal AI</p>
+              <p className="text-muted-foreground">Get the most out of Ella AI</p>
             </div>
 
             <Card className="p-6 border-2 border-primary">

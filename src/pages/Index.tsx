@@ -24,8 +24,8 @@ const Index = () => {
       <div className="relative min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-b from-background via-accent/20 to-background">
         <div className="max-w-md mx-auto text-center space-y-8">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <Apple className="h-16 w-16 text-primary" />
-            <h1 className="text-6xl font-bold">Cal AI</h1>
+            <span className="text-6xl">🍎</span>
+            <h1 className="text-6xl font-bold">Ella AI</h1>
           </div>
           
           <h2 className="text-3xl font-bold leading-tight">

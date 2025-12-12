@@ -61,8 +61,9 @@ const Auth = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <div className="flex items-center justify-center mb-4">
-            <Apple className="h-12 w-12 text-green-600" />
+          <div className="flex flex-col items-center justify-center mb-4">
+            <span className="text-5xl mb-2">🍎</span>
+            <span className="text-xl font-bold">Ella AI</span>
           </div>
           <CardTitle className="text-2xl font-bold text-center">
             {isLogin ? 'Welcome back' : 'Create account'}
