@@ -9,11 +9,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@/components/ThemeProvider';
 import despia from 'despia-native';
+import AccessibilitySettings from '@/components/AccessibilitySettings';
+import MealTemplates from '@/components/MealTemplates';
+import CycleTracker from '@/components/CycleTracker';
+import ExpertCredentials from '@/components/ExpertCredentials';
 import {
   LogOut, User, Bell, Shield, CreditCard, Link2, Moon, Sun,
   Globe, Scale, Trash2, Download, Eye, Key, Smartphone,
   AlertTriangle, ChevronRight, Mail, Lock, Clock, Droplet,
-  Dumbbell, Crown, Zap
+  Dumbbell, Crown, Zap, Accessibility, BookMarked, Heart
 } from 'lucide-react';
 import {
   AlertDialog,
@@ -476,6 +480,48 @@ const SettingsTab = () => {
             </div>
             <ChevronRight className="h-5 w-5 text-muted-foreground" />
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Accessibility */}
+      <AccessibilitySettings />
+
+      {/* Meal Templates */}
+      <Card className="bg-card border-border">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-foreground flex items-center gap-2 text-base">
+            <BookMarked className="h-5 w-5 text-primary" />
+            Quick Features
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <MealTemplates />
+        </CardContent>
+      </Card>
+
+      {/* Women's Health */}
+      <Card className="bg-card border-border">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-foreground flex items-center gap-2 text-base">
+            <Heart className="h-5 w-5 text-pink-500" />
+            Women's Health
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <CycleTracker />
+        </CardContent>
+      </Card>
+
+      {/* Expert Credentials */}
+      <Card className="bg-card border-border">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-foreground flex items-center gap-2 text-base">
+            <Shield className="h-5 w-5 text-primary" />
+            Professional Profile
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ExpertCredentials />
         </CardContent>
       </Card>
 

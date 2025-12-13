@@ -98,6 +98,48 @@ export type Database = {
         }
         Relationships: []
       }
+      cycle_logs: {
+        Row: {
+          created_at: string | null
+          cycle_day: number | null
+          date: string
+          flow_intensity: string | null
+          id: string
+          mood: string | null
+          notes: string | null
+          period_end: boolean | null
+          period_start: boolean | null
+          symptoms: Json | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          cycle_day?: number | null
+          date: string
+          flow_intensity?: string | null
+          id?: string
+          mood?: string | null
+          notes?: string | null
+          period_end?: boolean | null
+          period_start?: boolean | null
+          symptoms?: Json | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          cycle_day?: number | null
+          date?: string
+          flow_intensity?: string | null
+          id?: string
+          mood?: string | null
+          notes?: string | null
+          period_end?: boolean | null
+          period_start?: boolean | null
+          symptoms?: Json | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       daily_summaries: {
         Row: {
           created_at: string | null
@@ -167,6 +209,45 @@ export type Database = {
           logged_at?: string | null
           notes?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      expert_credentials: {
+        Row: {
+          created_at: string | null
+          credential_name: string
+          credential_type: string
+          id: string
+          institution: string | null
+          is_verified: boolean | null
+          license_number: string | null
+          updated_at: string | null
+          user_id: string
+          year_obtained: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          credential_name: string
+          credential_type: string
+          id?: string
+          institution?: string | null
+          is_verified?: boolean | null
+          license_number?: string | null
+          updated_at?: string | null
+          user_id: string
+          year_obtained?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          credential_name?: string
+          credential_type?: string
+          id?: string
+          institution?: string | null
+          is_verified?: boolean | null
+          license_number?: string | null
+          updated_at?: string | null
+          user_id?: string
+          year_obtained?: number | null
         }
         Relationships: []
       }
@@ -403,6 +484,48 @@ export type Database = {
           },
         ]
       }
+      meal_templates: {
+        Row: {
+          created_at: string | null
+          foods: Json | null
+          id: string
+          meal_type: string
+          name: string
+          total_calories: number | null
+          total_carbs: number | null
+          total_fat: number | null
+          total_protein: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          foods?: Json | null
+          id?: string
+          meal_type?: string
+          name: string
+          total_calories?: number | null
+          total_carbs?: number | null
+          total_fat?: number | null
+          total_protein?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          foods?: Json | null
+          id?: string
+          meal_type?: string
+          name?: string
+          total_calories?: number | null
+          total_carbs?: number | null
+          total_fat?: number | null
+          total_protein?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       notification_settings: {
         Row: {
           breakfast_time: string | null
@@ -480,7 +603,11 @@ export type Database = {
       }
       profiles: {
         Row: {
+          accessibility_high_contrast: boolean | null
+          accessibility_large_text: boolean | null
+          accessibility_reduce_motion: boolean | null
           activity_level: string | null
+          average_cycle_length: number | null
           created_at: string | null
           current_weight_kg: number | null
           daily_calorie_goal: number | null
@@ -490,10 +617,12 @@ export type Database = {
           daily_water_goal_ml: number | null
           dietary_preference: string | null
           email: string | null
+          enable_period_tracking: boolean | null
           full_name: string | null
           goal_type: string | null
           height_cm: number | null
           id: string
+          last_period_start: string | null
           onboarding_completed: boolean | null
           onboarding_step: number | null
           revenue_cat_user_id: string | null
@@ -508,7 +637,11 @@ export type Database = {
           weight_goal_kg: number | null
         }
         Insert: {
+          accessibility_high_contrast?: boolean | null
+          accessibility_large_text?: boolean | null
+          accessibility_reduce_motion?: boolean | null
           activity_level?: string | null
+          average_cycle_length?: number | null
           created_at?: string | null
           current_weight_kg?: number | null
           daily_calorie_goal?: number | null
@@ -518,10 +651,12 @@ export type Database = {
           daily_water_goal_ml?: number | null
           dietary_preference?: string | null
           email?: string | null
+          enable_period_tracking?: boolean | null
           full_name?: string | null
           goal_type?: string | null
           height_cm?: number | null
           id: string
+          last_period_start?: string | null
           onboarding_completed?: boolean | null
           onboarding_step?: number | null
           revenue_cat_user_id?: string | null
@@ -536,7 +671,11 @@ export type Database = {
           weight_goal_kg?: number | null
         }
         Update: {
+          accessibility_high_contrast?: boolean | null
+          accessibility_large_text?: boolean | null
+          accessibility_reduce_motion?: boolean | null
           activity_level?: string | null
+          average_cycle_length?: number | null
           created_at?: string | null
           current_weight_kg?: number | null
           daily_calorie_goal?: number | null
@@ -546,10 +685,12 @@ export type Database = {
           daily_water_goal_ml?: number | null
           dietary_preference?: string | null
           email?: string | null
+          enable_period_tracking?: boolean | null
           full_name?: string | null
           goal_type?: string | null
           height_cm?: number | null
           id?: string
+          last_period_start?: string | null
           onboarding_completed?: boolean | null
           onboarding_step?: number | null
           revenue_cat_user_id?: string | null
