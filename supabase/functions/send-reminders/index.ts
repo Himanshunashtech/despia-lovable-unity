@@ -126,6 +126,49 @@ Deno.serve(async (req) => {
         console.error('Error inserting notifications:', insertError)
         throw insertError
       }
+
+      // Send push notifications via OneSignal for each user
+      const onesignalAppId = Deno.env.get('ONESIGNAL_APP_ID')
+      const onesignalApiKey = Deno.env.get('ONESIGNAL_REST_API_KEY')
+      
+      if (onesignalAppId && onesignalApiKey) {
+        const userIds = [...new Set(notificationsToSend.map(n => n.user_id))]
+        
+        for (const userId of userIds) {
+          const userNotifications = notificationsToSend.filter(n => n.user_id === userId)
+          const latestNotification = userNotifications[userNotifications.length - 1]
+          
+          // Get user's devices
+          const { data: devices } = await supabase
+            .from('user_devices')
+            .select('onesignal_player_id')
+            .eq('user_id', userId)
+            .not('onesignal_player_id', 'is', null)
+          
+          const playerIds = devices?.map(d => d.onesignal_player_id).filter(Boolean) || []
+          
+          if (playerIds.length > 0) {
+            try {
+              await fetch('https://onesignal.com/api/v1/notifications', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Basic ${onesignalApiKey}`,
+                },
+                body: JSON.stringify({
+                  app_id: onesignalAppId,
+                  include_player_ids: playerIds,
+                  headings: { en: latestNotification.title },
+                  contents: { en: latestNotification.message },
+                }),
+              })
+              console.log(`Push sent to user ${userId} on ${playerIds.length} devices`)
+            } catch (pushError) {
+              console.error(`Push failed for user ${userId}:`, pushError)
+            }
+          }
+        }
+      }
     }
 
     return new Response(

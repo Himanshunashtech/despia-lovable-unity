@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
+import { usePushNotifications } from '@/hooks/usePushNotifications';
 import { Loader2 } from 'lucide-react';
 import ellaLogo from '@/assets/ella-logo.png';
 
@@ -17,6 +18,7 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { linkDeviceToUser, requestPushPermission } = usePushNotifications();
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,11 +26,18 @@ const Auth = () => {
 
     try {
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
         if (error) throw error;
+        
+        // Link device for push notifications after successful login
+        if (data.user) {
+          await requestPushPermission();
+          await linkDeviceToUser(data.user.id);
+        }
+        
         navigate('/dashboard');
       } else {
         const { error } = await supabase.auth.signUp({

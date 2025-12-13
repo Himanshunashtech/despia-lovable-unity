@@ -842,6 +842,36 @@ export type Database = {
           },
         ]
       }
+      user_devices: {
+        Row: {
+          created_at: string
+          device_uuid: string | null
+          id: string
+          onesignal_player_id: string | null
+          platform: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          device_uuid?: string | null
+          id?: string
+          onesignal_player_id?: string | null
+          platform?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          device_uuid?: string | null
+          id?: string
+          onesignal_player_id?: string | null
+          platform?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string | null
