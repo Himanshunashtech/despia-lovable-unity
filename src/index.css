@@ -76,4 +76,29 @@
   .safe-area-top {
     padding-top: env(safe-area-inset-top);
   }
+
+  /* Accessibility: High Contrast Mode */
+  .high-contrast {
+    --foreground: 0 0% 100%;
+    --background: 0 0% 0%;
+    --card: 0 0% 5%;
+    --card-foreground: 0 0% 100%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 85%;
+    --border: 0 0% 40%;
+  }
+
+  .high-contrast * {
+    border-width: 2px !important;
+  }
+
+  /* Accessibility: Reduce Motion */
+  .reduce-motion *,
+  .reduce-motion *::before,
+  .reduce-motion *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
