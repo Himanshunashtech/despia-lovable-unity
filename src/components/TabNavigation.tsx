@@ -1,9 +1,9 @@
-import { Home, ChefHat, BarChart3, Settings, Plus, Bell, Flame, User } from 'lucide-react';
+import { Home, ChefHat, BarChart3, Settings, Plus, Flame, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import ellaLogo from '@/assets/ella-logo.png';
+import NotificationCenter from '@/components/NotificationCenter';
 
 interface TabNavigationProps {
   activeTab: string;
@@ -57,9 +57,7 @@ const TabNavigation = ({ activeTab, onTabChange, onAddFood, streak = 0 }: TabNav
             <h1 className="text-xl font-bold text-white">Ella AI</h1>
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
-              <Bell className="h-5 w-5" />
-            </Button>
+            <NotificationCenter />
             <div className="flex items-center gap-1 bg-[#2a2a3a] px-3 py-1.5 rounded-full">
               <Flame className="h-4 w-4 text-orange-500" />
               <span className="text-sm font-bold text-white">{currentStreak}</span>
