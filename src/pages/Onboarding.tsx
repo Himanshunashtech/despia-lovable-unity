@@ -6,7 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
-import { Apple, Target, Activity, Utensils, Scale, Ruler, TrendingDown, CheckCircle2, Crown } from 'lucide-react';
+import { Target, Activity, Utensils, Scale, Ruler, TrendingDown, CheckCircle2, Crown } from 'lucide-react';
+import ellaLogo from '@/assets/ella-logo.png';
 
 const Onboarding = () => {
   const [step, setStep] = useState(1);
@@ -140,7 +141,7 @@ const Onboarding = () => {
       case 1:
         return (
           <div className="space-y-6 text-center">
-            <span className="text-7xl block mx-auto">🍎</span>
+            <img src={ellaLogo} alt="Ella AI" className="h-24 w-24 mx-auto object-contain" />
             <h1 className="text-4xl font-bold">Welcome to Ella AI</h1>
             <p className="text-xl text-muted-foreground">Your AI-powered nutrition companion</p>
             <p className="text-muted-foreground">Let's personalize your experience in just a few steps</p>

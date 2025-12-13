@@ -2,7 +2,8 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Apple, Camera, Brain, Sparkles, ScanBarcode } from 'lucide-react';
+import { Camera, Brain, Sparkles, ScanBarcode } from 'lucide-react';
+import ellaLogo from '@/assets/ella-logo.png';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -24,8 +25,8 @@ const Index = () => {
       <div className="relative min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-b from-background via-accent/20 to-background">
         <div className="max-w-md mx-auto text-center space-y-8">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <span className="text-6xl">🍎</span>
-            <h1 className="text-6xl font-bold">Ella AI</h1>
+            <img src={ellaLogo} alt="Ella AI" className="h-20 w-20 object-contain" />
+            <h1 className="text-5xl font-bold">Ella AI</h1>
           </div>
           
           <h2 className="text-3xl font-bold leading-tight">

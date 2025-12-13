@@ -6,7 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Apple } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
+import ellaLogo from '@/assets/ella-logo.png';
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -62,7 +63,7 @@ const Auth = () => {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <div className="flex flex-col items-center justify-center mb-4">
-            <span className="text-5xl mb-2">🍎</span>
+            <img src={ellaLogo} alt="Ella AI" className="h-16 w-16 object-contain mb-2" />
             <span className="text-xl font-bold">Ella AI</span>
           </div>
           <CardTitle className="text-2xl font-bold text-center">
